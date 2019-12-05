@@ -7,6 +7,7 @@
             <v-text-field
               outlined
               filled
+              v-model="BlogModel.TitleBlog"
               label="Tiêu đề"
             ></v-text-field>
           </v-col>
@@ -17,6 +18,7 @@
               outlined
               filled
               label="Tác Giả"
+              v-model="BlogModel.AuthorName"
             ></v-text-field>
           </v-col>
           <v-col cols="6" sm="6" md="6">
@@ -28,27 +30,55 @@
             <v-textarea
               outlined
               filled
-              label="Tiêu đề"
+              label="Mô tả"
+              v-model="BlogModel.Description"
             ></v-textarea>
           </v-col>
         </v-row>
       </v-container>
     </v-form>
-    <vue-editor id="editor" useCustomImageHandler @imageAdded="handleImageAdded" v-model="content"> </vue-editor>
+    <quill-editor
+			v-model="BlogModel.Content"
+			ref="myQuillEditor"
+			:options="editorOption"
+		/>
+    
 </div>
     
 </template>
 
 <script>
-  import { VueEditor } from "vue2-editor";
+  import 'quill/dist/quill.snow.css'
+  import { quillEditor } from 'vue-quill-editor'
   import axios from "axios";
   export default {
     components: {
-      VueEditor
+      quillEditor
     },
     data() {
       return {
-         content: "<h1>Html For Editor</h1>",
+        BlogModel: {
+          BlogID: 0,
+          Content: "",
+          Description: "",
+          AbumImageID: 0,
+          AmountVote: 0,
+          CategoryBlogID: 0,
+          TitleBlog: "",
+          AuthorName: "",
+          SourceBlog: "",
+          PublicationDate: null,
+        },
+        AbumImage:[],
+        TypeImage: {
+          ImageID: 0,
+          AbumImageID: 0
+        },
+        editorOption: {
+          placeholder: 'Type your post...',
+          readOnly: true,
+          theme: 'snow'
+        },
       }
     },
     methods: {

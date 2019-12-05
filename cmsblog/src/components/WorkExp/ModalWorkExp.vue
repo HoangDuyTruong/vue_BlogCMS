@@ -76,6 +76,7 @@ export default {
     isShow: false,
     isUpdate: true,
     WorkExp: {
+      WorkID: 0,
       YearExp: 0,
       Level: 0,
       Percent: 0,
@@ -89,7 +90,7 @@ export default {
       if (this.isUpdate) {
         console.log(this.WorkExp)
         axios
-          .put("https://apiblogprofile20191205011822.azurewebsites.net/api/WorkExp", this.WorkExp)
+          .put("https://localhost:44334/api/WorkExp", this.WorkExp)
           .then((res) => {
             console.log(res)
             this.isShow = false
@@ -107,6 +108,7 @@ export default {
     show(isUpdate,item){
       this.isUpdate = isUpdate;
       if(isUpdate){
+        this.WorkExp.WorkID = item.WorkID
         this.WorkExp.YearExp = item.YearExp
         this.WorkExp.Level = item.Level
         this.WorkExp.Percent = item.Percent
