@@ -33,7 +33,7 @@
             </td>
             <td class="justify-center" style="width:90px;">
               <v-icon  color="teal" @click = "ShowModalSua(true,item)">edit</v-icon>
-              <v-icon  color="pink" @click= "showXoaSkill()" >delete</v-icon>
+              <v-icon  color="pink" @click= "showXoaSkill(item.SkillID)" >delete</v-icon>
             </td>
           </tr>
         </tbody>
@@ -45,12 +45,12 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="pink" @click = "xacNhanXoa()">Xóa</v-btn>
+              <v-btn color="pink" @click = "xacNhanXoa(idXoa)">Xóa</v-btn>
               <v-btn color="green darken-1" @click.native= "dialogXoaSkill = false"  flat>Hủy</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <modal-skill ref="ModalSkill"></modal-skill>
+        <modal-skill @SaveEmit="Save" ref="ModalSkill"></modal-skill>
       </template>
     </v-data-table>
     <div class="text-center pt-2">
@@ -77,10 +77,11 @@ export default {
     return {
       Page:0,
       size: 10,
-      totalRow: 0,
-      PageCount:5,
+      totalRow: 100,
+      PageCount: 0,
       search: "",
       dialogXoaSkill: false,
+      idXoa: 0,
       headers: [
         {
           text: "Name Skill",
@@ -98,6 +99,10 @@ export default {
     };
   },
   methods: {
+      Save(){
+        console.log("data");
+        this.getData(0,10,"");
+      },
       getData(page,size,search){
         axios.get("https://localhost:44334/api/Skill",{
           params: {
@@ -110,17 +115,26 @@ export default {
           this.SkillData = res.data.Data
           this.totalRow = res.data.SizePage;
           this.PageCount = this.totalRow/this.size
+          if(this.PageCount == undefined)
+            this.PageCount = 0
         })
       },
-      showXoaSkill(){
+      showXoaSkill(id){
         this.dialogXoaSkill = true;
+        this.idXoa = id;
       },
-      xacNhanXoa(){
-        this.dialogXoaSkill = true;
+      xacNhanXoa(id){
+        console.log(id)
+        axios.delete("https://localhost:44334/api/Skill/"+ id).then(()=>{
+          this.getData(0,this.size,"");
+          this.dialogXoaSkill =false
+        }).catch(()=>{
+          this.getData(0,this.size,"");
+           this.dialogXoaSkill =false
+        })
       },
       ShowModalSua(isUpdate,id){
         this.$refs.ModalSkill.show(isUpdate,id)
-
       },
       ShowModalAdd(){
         this.$refs.ModalSkill.show(false,{})

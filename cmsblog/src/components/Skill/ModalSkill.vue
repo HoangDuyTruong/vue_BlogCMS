@@ -51,10 +51,10 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click.native ="isShow = false"
+          <v-btn color="blue darken-1"  @click="Close" text @click.native ="isShow = false"
             >Close</v-btn
           >
-          <v-btn color="blue darken-1" text @click.native ="isShow = false">Save</v-btn>
+          <v-btn color="blue darken-1" @click="Save" text @click.native ="isShow = false">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -62,6 +62,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   data: () => ({
     isShow: false,
@@ -84,6 +85,25 @@ export default {
           this.isShow = true;
           this.Skill = {};
         }
+      },
+      Save(){
+        if(this.isUpdate)  {
+          axios.put("https://localhost:44334/api/Skill",this.Skill).then(()=>{
+            this.$emit('SaveEmit')
+          }).catch(()=>{
+            this.$emit('SaveEmit')
+          })
+        } else {
+          axios.post("https://localhost:44334/api/Skill",this.Skill).then(()=>{
+            this.$emit('SaveEmit')
+          }).catch(()=>{
+            this.$emit('SaveEmit')
+          })
+        }
+       
+      },
+      Close() {
+          this.$emit('SaveEmit')
       }
   }
 };
