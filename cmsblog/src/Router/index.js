@@ -12,6 +12,19 @@ export default new Router({
         {
             path: "/writepost",
             component: () => import("@/components/WritePost"),
+        },
+        {
+            path: "/skill",
+            component: () => import("@/components/Skill/Skill")
+        }, 
+        {
+            path: "/InforProfile",
+            component: () => import("@/components/InfoProfile/InforProfile")
+        },
+        {
+            path: "/WorkExp",
+            component: () => import("@/components/WorkExp/WorkExp")
         }
+
     ]
 })
