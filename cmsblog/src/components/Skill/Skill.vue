@@ -12,7 +12,7 @@
         <v-icon>add</v-icon>
       </v-btn>
     </v-card-title>
-    <v-data-table :headers="headers" :pagination="pagination" :items="SkillData" :search="search">
+    <v-data-table :headers="headers"  :items="SkillData" :search="search">
       <template v-slot:body="{ items }">
         <tbody>
           <tr v-for="item in items" :key="item.name">
@@ -53,6 +53,9 @@
         <modal-skill ref="ModalSkill"></modal-skill>
       </template>
     </v-data-table>
+    <div class="text-center pt-2">
+      <v-pagination v-model="Page" :length="PageCount"></v-pagination>
+    </div>
   </v-card>
 </template>
 <script>
@@ -66,19 +69,16 @@ export default {
     search: function () {
         this.getData(0,10,this.search);
     },
-    pagination: function () {
-      this.getData(0,this.pagination.itemsPerPage,this.search)
+    Page: function () {
+      this.getData(this.Page,this.size,this.search)
     }
   },
   data() {
     return {
-      pagination:{
-        page: 0,
-        itemsPerPage: 5,
-        itemsLength: 10
-      },
+      Page:0,
       size: 10,
-      totalRow:100,
+      totalRow: 0,
+      PageCount:5,
       search: "",
       dialogXoaSkill: false,
       headers: [
@@ -109,6 +109,7 @@ export default {
         .then((res) => {
           this.SkillData = res.data.Data
           this.totalRow = res.data.SizePage;
+          this.PageCount = this.totalRow/this.size
         })
       },
       showXoaSkill(){
