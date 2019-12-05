@@ -34,37 +34,46 @@
         </v-row>
       </v-container>
     </v-form>
-    <quill-editor
-    v-model="content"
-    ref="myQuillEditor"
-    :options="editorOption"
-    />
-   
+    <vue-editor id="editor" useCustomImageHandler @imageAdded="handleImageAdded" v-model="content"> </vue-editor>
 </div>
     
 </template>
 
 <script>
-  import 'quill/dist/quill.snow.css'
-  import { quillEditor } from 'vue-quill-editor'
-  //import axios from "axios";
+  import { VueEditor } from "vue2-editor";
+  import axios from "axios";
   export default {
     components: {
-      quillEditor
+      VueEditor
     },
     data() {
       return {
-          content: "",
-          editorOption: {
-            debug: 'info',
-            placeholder: 'Type your post...',
-            readOnly: true,
-            theme: 'snow'
-         }
+         content: "<h1>Html For Editor</h1>",
       }
     },
     methods: {
-      
+      handleImageAdded: function(file, Editor, cursorLocation, resetUploader) {
+      // An example of using FormData
+      // NOTE: Your key could be different such as:
+      // formData.append('file', file)
+
+      var formData = new FormData();
+      formData.append("image", file);
+
+      axios({
+        url: "https://fakeapi.yoursite.com/images",
+        method: "POST",
+        data: formData
+      })
+        .then(result => {
+          let url = result.data.url; // Get url from response
+          Editor.insertEmbed(cursorLocation, "image", url);
+          resetUploader();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      }
     },
   }
 </script>
