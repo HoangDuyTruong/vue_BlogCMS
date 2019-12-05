@@ -8,7 +8,7 @@
         hide-details
       ></v-text-field>
       <v-spacer></v-spacer>
-      <v-btn fab dark small color="primary" @click = "ShowModalAdd()">
+      <v-btn fab dark small color="primary" @click="ShowModalAdd()">
         <v-icon>add</v-icon>
       </v-btn>
     </v-card-title>
@@ -41,12 +41,16 @@
               {{ item.Slogan }}
             </td>
             <td class="justify-center" style="width:90px;">
-              <v-icon  color="teal" @click = "ShowModalSua(true,item)">edit</v-icon>
-              <v-icon  color="pink" @click= "showXoaInforProfile()" >delete</v-icon>
+              <v-icon color="teal" @click="ShowModalSua(true, item)"
+                >edit</v-icon
+              >
+              <v-icon color="pink" @click="showXoaInforProfile()"
+                >delete</v-icon
+              >
             </td>
           </tr>
         </tbody>
-        <v-dialog v-model="dialogXoaInforProfile" persistent max-width="290" >
+        <v-dialog v-model="dialogXoaInforProfile" persistent max-width="290">
           <v-card>
             <v-card-title class="headline">Xác nhận xóa</v-card-title>
             <v-card-text>
@@ -54,8 +58,13 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="pink" @click = "xacNhanXoa()">Xóa</v-btn>
-              <v-btn color="green darken-1" @click.native= "dialogXoaInforProfile = false"  flat>Hủy</v-btn>
+              <v-btn color="pink" @click="xacNhanXoa(idXoa)">Xóa</v-btn>
+              <v-btn
+                color="green darken-1"
+                @click.native="dialogXoaInforProfile = false"
+                text
+                >Hủy</v-btn
+              >
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -65,13 +74,16 @@
   </v-card>
 </template>
 <script>
-import ModalInforProfile from './ModalInforProfile'
+import ModalInforProfile from "./ModalInforProfile";
+import axios from "axios";
 export default {
   components: {
-    ModalInforProfile,
+    ModalInforProfile
   },
   data() {
     return {
+      idXoa: 0,
+      size: 10,
       search: "",
       dialogXoaInforProfile: false,
       headers: [
@@ -82,62 +94,66 @@ export default {
         },
         { text: "NumberPhone", value: "NumberPhone" },
         { text: "Adress", value: "Adress" },
-        { text: "FullName", value: "FullName"},
-        { text: "Dob", value: "Dob"},
-        { text: "LinkFacebook", value: "LinkFacebook"},
-        { text: "Description", value: "Description"},
-        { text: "Slogan", value: "Slogan"},
+        { text: "FullName", value: "FullName" },
+        { text: "Dob", value: "Dob" },
+        { text: "LinkFacebook", value: "LinkFacebook" },
+        { text: "Description", value: "Description" },
+        { text: "Slogan", value: "Slogan" },
         { text: "Manipulation", value: "#" }
       ],
-      InforProfileData: [
-        {
-          Email: "Nguyễn Thị Huyền Trang",
-          NumberPhone: "CNTT15",
-          Adress: "6-9-1998",
-          FullName: "Vĩnh Phúc",
-          Dob: "90%",
-          LinkFacebook: "ac",
-          Description: "a",
-          Slogan: "a"
-        },
-        {
-          Email: "Nguyễn  Huyền Trang",
-          NumberPhone: "CNTT15",
-          Adress: "6-9-1998",
-          FullName: "Vĩnh Phúc",
-          Dob: "90%",
-          LinkFacebook: "ac",
-          Description: "a",
-          Slogan: "a"
-        },
-
-        {
-          Email: "Nguyễn Thị Huyền Trang",
-          NumberPhone: "CNTT15",
-          Adress: "6-9-1998",
-          FullName: "Vĩnh Phúc",
-          Dob: "90%",
-          LinkFacebook: "ac",
-          Description: "a",
-          Slogan: "a"
-        }
-      ],
-      
+      InforProfileData: []
     };
   },
   methods: {
-      showXoaInforProfile(){
-        this.dialogXoaInforProfile = true;
-      },
-      xacNhanXoa(){
-        this.dialogXoaInforProfile = true;
-      },
-      ShowModalSua(isUpdate,id){
-        this.$refs.ModalInforProfile.show(isUpdate,id)
-      },
-      ShowModalAdd(){
-        this.$refs.ModalInforProfile.show(false,{})
-      }
+    getData(page, size) {
+      axios
+        .get(
+          "https://apiblogprofile20191205011822.azurewebsites.net/api/InfoProfile",
+          {
+            params: {
+              PageSize: page,
+              Size: size
+            }
+          }
+        )
+        .then(res => {
+          console.log(res);
+          this.InforProfileData = res.data.Data;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    showXoaInforProfile(id) {
+      console.log(1111);
+      this.dialogXoaInforProfile = true;
+      this.idXoa = id;
+    },
+    xacNhanXoa(id) {
+      console.log(id);
+      axios
+        .delete(
+          "https://apiblogprofile20191205011822.azurewebsites.net/api/InfoProfile/" +
+            id
+        )
+        .then(() => {
+          this.getData(0, this.size, "");
+          this.dialogXoaInforProfile = false;
+        })
+        .catch(() => {
+          this.getData(0, this.size, "");
+          this.dialogXoaInforProfile = false;
+        });
+    },
+    ShowModalSua(isUpdate, id) {
+      this.$refs.ModalInforProfile.show(isUpdate, id);
+    },
+    ShowModalAdd() {
+      this.$refs.ModalInforProfile.show(false, {});
+    }
+  },
+  mounted() {
+    this.getData(0, this.size);
   }
 };
 </script>
