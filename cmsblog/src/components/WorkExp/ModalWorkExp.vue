@@ -60,9 +60,8 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" text @click.native ="isShow = false"
-            >Close</v-btn
-          >
-          <v-btn color="blue darken-1" text @click.native ="isShow = false">Save</v-btn>
+            >Close</v-btn>
+          <v-btn color="blue darken-1" text @click.native ="save">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -70,30 +69,61 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   data: () => ({
     isShow: false,
     isUpdate: true,
     WorkExp: {
-        YearExp: "C#",
-        Level: "ABCXYZ",
-        Percent: "1 years",
-        CompanyName: "90%",
-        Description: "5",
-        Position: "a"
+      YearExp: 0,
+      Level: 0,
+      Percent: 0,
+      CompanyName: '',
+      Description: '',
+      Position: ''
     }
   }),
   methods: {
-      show(isUpdate,id){
-        this.isUpdate = isUpdate;
-        if(isUpdate){
-          this.WorkExp = id;
-          this.isShow = true;
-        } else  {
-          this.isShow = true;
-          this.WorkExp = {};
-        }
+    save () {
+      if (this.isUpdate) {
+        console.log(this.WorkExp)
+        axios
+          .put("https://apiblogprofile20191205011822.azurewebsites.net/api/WorkExp", this.WorkExp)
+          .then((res) => {
+            console.log(res)
+            this.isShow = false
+            this.$emit('reloadWorkExp')
+          })
+      } else {
+        axios
+          .post("https://apiblogprofile20191205011822.azurewebsites.net/api/WorkExp", this.WorkExp)
+          .then(() => {
+            this.isShow = false
+            this.$emit('reloadWorkExp')
+          })
       }
+    },
+    show(isUpdate,item){
+      this.isUpdate = isUpdate;
+      if(isUpdate){
+        this.WorkExp.YearExp = item.YearExp
+        this.WorkExp.Level = item.Level
+        this.WorkExp.Percent = item.Percent
+        this.WorkExp.CompanyName = item.CompanyName
+        this.WorkExp.Description = item.Description
+        this.WorkExp.Position = item.Position
+        this.isShow = true;
+      } else {
+        this.WorkExp.YearExp = ''
+        this.WorkExp.Level = ''
+        this.WorkExp.Percent = ''
+        this.WorkExp.CompanyName = ''
+        this.WorkExp.Description = ''
+        this.WorkExp.Position = ''
+        this.isShow = true;
+      }
+    }
   }
 };
 </script>

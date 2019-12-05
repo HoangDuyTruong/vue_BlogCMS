@@ -53,19 +53,23 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <modal-work-exp ref="ModalWorkExp"></modal-work-exp>
+        <modal-work-exp ref="ModalWorkExp" @reloadWorkExp="reloadWorkExp"></modal-work-exp>
       </template>
     </v-data-table>
   </v-card>
 </template>
 <script>
 import ModalWorkExp from './ModalWorkExp'
+import axios from 'axios'
+
 export default {
   components: {
     ModalWorkExp
   },
   data() {
     return {
+      size: 10,
+      totalRow:100,
       search: "",
       dialogXoaWorkExp: false,
       headers: [
@@ -81,50 +85,42 @@ export default {
         { text: "Position", value: "Position"},
         { text: "Manipulation", value: "#" }
       ],
-      WorkExpData: [
-        {
-          YearExp: "Nguyễn Thị Huyền Trang",
-          Level: "CNTT15",
-          Percent: "6-9-1998",
-          CompanyName: "Vĩnh Phúc",
-          Description: "90%",
-          Position: "hihi"
-        },
-        {
-          YearExp: "Nguyễn Thị Huyền ",
-          Level: "CNTT15",
-          Percent: "6-9-1998",
-          CompanyName: "Vĩnh Phúc",
-          Description: "90%",
-          Position: "hihi"
-        },
-
-        {
-          YearExp: "Nguyễn Huyền Trang",
-          Level: "CNTT15",
-          Percent: "6-9-1998",
-          CompanyName: "Vĩnh Phúc",
-          Description: "90%",
-          Position: "hihi"
-        }
-      ],
-      
+      WorkExpData: []
     };
   },
   methods: {
-      showXoaWorkExp(){
-        this.dialogXoaWorkExp = true;
-      },
-      xacNhanXoa(){
-        this.dialogXoaWorkExp = true;
-      },
-      ShowModalSua(isUpdate,id){
-        this.$refs.ModalWorkExp.show(isUpdate,id)
-
-      },
-      ShowModalAdd(){
-        this.$refs.ModalWorkExp.show(false,{})
-      }
+    getData(page,size){
+      axios
+        .get("https://apiblogprofile20191205011822.azurewebsites.net/api/WorkExp",{
+          params: {
+            PageSize: page,
+            Size:size
+          }
+        })
+        .then(res => {
+          console.log(res)
+          this.WorkExpData = res.data.Data
+          this.totalRow = res.data.SizePage
+        })
+    },
+    reloadWorkExp () {
+      this.getData(0, this.size)
+    },
+    showXoaWorkExp(){
+      this.dialogXoaWorkExp = true;
+    },
+    xacNhanXoa(){
+      this.dialogXoaWorkExp = true;
+    },
+    ShowModalSua(isUpdate,id){
+      this.$refs.ModalWorkExp.show(isUpdate,id)
+    },
+    ShowModalAdd(){
+      this.$refs.ModalWorkExp.show(false,{})
+    }
+  },
+  mounted () {
+    this.getData(0, this.size)
   }
 };
 </script>
