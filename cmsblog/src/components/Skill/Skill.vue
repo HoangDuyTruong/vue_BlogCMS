@@ -12,7 +12,7 @@
         <v-icon>add</v-icon>
       </v-btn>
     </v-card-title>
-    <v-data-table :headers="headers" :items="SkillData" :search="search">
+    <v-data-table :headers="headers" :pagination="pagination" :items="SkillData" :search="search">
       <template v-slot:body="{ items }">
         <tbody>
           <tr v-for="item in items" :key="item.name">
@@ -23,13 +23,13 @@
               {{ item.Description }}
             </td>
             <td style="max-width: 100%,width:20%">
-              {{ item.YearExperience }}
+              {{ item.YearExp }}
             </td>
             <td style="max-width: 100%,width:20%">
               {{ item.Percent }}
             </td>
             <td style="max-width: 100%,width:20%">
-              {{ item.level }}
+              {{ item.Level }}
             </td>
             <td class="justify-center" style="width:90px;">
               <v-icon  color="teal" @click = "ShowModalSua(true,item)">edit</v-icon>
@@ -62,8 +62,23 @@ export default {
   components: {
     ModalSkill
   },
+  watch: {
+    search: function () {
+        this.getData(0,10,this.search);
+    },
+    pagination: function () {
+      this.getData(0,this.pagination.itemsPerPage,this.search)
+    }
+  },
   data() {
     return {
+      pagination:{
+        page: 0,
+        itemsPerPage: 5,
+        itemsLength: 10
+      },
+      size: 10,
+      totalRow:100,
       search: "",
       dialogXoaSkill: false,
       headers: [
@@ -73,48 +88,27 @@ export default {
           value: "NameSkill"
         },
         { text: "Description", value: "Description" },
-        { text: "Year Experience", value: "YearExperience" },
+        { text: "Year Experience", value: "YearExp" },
         { text: "Percent", value: "Percent"},
-        { text: "Level", value: "level"},
+        { text: "Level", value: "Level"},
         { text: "Manipulation", value: "#" }
       ],
-      SkillData: [
-        {
-          NameSkill: "Nguyễn Thị Huyền Trang",
-          Description: "CNTT15",
-          YearExperience: "6-9-1998",
-          Percent: "Vĩnh Phúc",
-          level: "90%"
-        },
-        {
-          NameSkill: "Đỗ Trung Dũng",
-          Description: "CDT-15",
-          YearExperience: "29-3-1998",
-          Percent: "Hà Nội",
-          level: "90%"
-        },
-
-        {
-          NameSkill: "Trần Công Sơn",
-          Description: "KTPM15",
-          YearExperience: "30-8-1998",
-          Percent: "Gia Lâm",
-          level: "90%"
-        }
-      ],
+      SkillData: [],
       
     };
   },
   methods: {
-      getData(page,size){
-        var config = {
-          PageSize: page,
-          Size: size
-        }
-        axios.get("https://apiblogprofile20191205011822.azurewebsites.net/api/Skill/Get",config)
+      getData(page,size,search){
+        axios.get("https://localhost:44334/api/Skill",{
+          params: {
+            PageSize: page,
+            Size:size,
+            NameSkill:search
+          }
+        })
         .then((res) => {
-          console.log(res);
-
+          this.SkillData = res.data.Data
+          this.totalRow = res.data.SizePage;
         })
       },
       showXoaSkill(){
@@ -131,8 +125,9 @@ export default {
         this.$refs.ModalSkill.show(false,{})
       }
   },
+
   created() {
-    this.getData(0,10);
+    this.getData(0,this.size,"");
   },
 };
 </script>
