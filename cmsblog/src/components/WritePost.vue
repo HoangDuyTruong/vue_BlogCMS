@@ -22,7 +22,14 @@
             ></v-text-field>
           </v-col>
           <v-col cols="6" sm="6" md="6">
-              <v-file-input label="Chọn ảnh bìa"></v-file-input>
+              <v-file-input  @click='pickFile' v-model="imageName" label="Chọn ảnh bìa"></v-file-input>
+              <input
+                type="file"
+                style="display: none"
+                ref="image"
+                accept="image/*"
+                @change="onFilePicked"
+              >
           </v-col>
         </v-row>
         <v-row>
@@ -42,7 +49,9 @@
 			ref="myQuillEditor"
 			:options="editorOption"
 		/>
-    
+    <div class="my-2">
+        <v-btn @click="Save" depressed small color="primary">Save</v-btn>
+      </div>
 </div>
     
 </template>
@@ -68,11 +77,14 @@
           AuthorName: "",
           SourceBlog: "",
           PublicationDate: null,
+          ImageTypes:[]
         },
+        imageName: null,
+        imageFile:{},
         AbumImage:[],
         TypeImage: {
           ImageID: 0,
-          AbumImageID: 0
+          TypeImage: "1"
         },
         editorOption: {
           placeholder: 'Type your post...',
@@ -82,29 +94,45 @@
       }
     },
     methods: {
-      handleImageAdded: function(file, Editor, cursorLocation, resetUploader) {
-      // An example of using FormData
-      // NOTE: Your key could be different such as:
-      // formData.append('file', file)
-
-      var formData = new FormData();
-      formData.append("image", file);
-
-      axios({
-        url: "https://fakeapi.yoursite.com/images",
-        method: "POST",
-        data: formData
-      })
+      Save: function() {
+      this.BlogModel.ImageTypes.push(this.TypeImage)
+      axios.post("https://localhost:44334/api/BlogApi",this.BlogModel)
         .then(result => {
-          let url = result.data.url; // Get url from response
-          Editor.insertEmbed(cursorLocation, "image", url);
-          resetUploader();
+          console.log(result)
         })
         .catch(err => {
           console.log(err);
         });
+      },
+      pickFile () {
+          this.$refs.image.click()
+      },
+      onFilePicked (e) {
+        const files = e.target.files
+        if(files[0] !== undefined) {
+          this.imageName = files[0].name
+          if(this.imageName.lastIndexOf('.') <= 0) {
+            return
+          }
+          const fr = new FileReader ()
+          fr.readAsDataURL(files[0])
+          fr.addEventListener('load', () => {
+            this.imageUrl = fr.result
+            this.imageFile = files[0] // this is an image file that can be sent to server...
+            let formData = new FormData();
+            formData.append("file", files[0]);
+            axios.post("https://localhost:44334/api/Images/PostUserImage",
+            formData).then((res)=>{
+              this.TypeImage.ImageID = res.data.ImageID
+            })
+          })
+        } else {
+          this.imageName = ''
+          this.imageFile = ''
+          this.imageUrl = ''
+        }
       }
-    },
+    }
   }
 </script>
 

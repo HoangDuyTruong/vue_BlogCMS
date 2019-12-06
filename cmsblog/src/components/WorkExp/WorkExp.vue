@@ -36,7 +36,7 @@
             </td>
             <td class="justify-center" style="width:90px;">
               <v-icon  color="teal" @click = "ShowModalSua(true,item)">edit</v-icon>
-              <v-icon  color="pink" @click= "showXoaWorkExp()" >delete</v-icon>
+              <v-icon  color="pink" @click= "showXoaWorkExp(item.WorkID)" >delete</v-icon>
             </td>
           </tr>
         </tbody>
@@ -48,7 +48,7 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="pink" @click = "xacNhanXoa()">Xóa</v-btn>
+              <v-btn color="pink" @click = "xacNhanXoa(isXoa)">Xóa</v-btn>
               <v-btn color="green darken-1" @click.native= "dialogXoaWorkExp = false"  flat>Hủy</v-btn>
             </v-card-actions>
           </v-card>
@@ -72,6 +72,7 @@ export default {
       totalRow:100,
       search: "",
       dialogXoaWorkExp: false,
+      isXoa: 0,
       headers: [
         {
           text: "Year Experience",
@@ -106,11 +107,18 @@ export default {
     reloadWorkExp () {
       this.getData(0, this.size)
     },
-    showXoaWorkExp(){
+    showXoaWorkExp(id){
       this.dialogXoaWorkExp = true;
+      this.isXoa = id;
     },
-    xacNhanXoa(){
-      this.dialogXoaWorkExp = true;
+    xacNhanXoa(id){
+      axios.delete("https://localhost:44334/api/WorkExp/"+ id).then(()=>{
+          this.getData(0,this.size,"");
+          this.dialogXoaWorkExp =false
+        }).catch(()=>{
+          this.getData(0,this.size,"");
+           this.dialogXoaWorkExp =false
+        })
     },
     ShowModalSua(isUpdate,id){
       this.$refs.ModalWorkExp.show(isUpdate,id)
