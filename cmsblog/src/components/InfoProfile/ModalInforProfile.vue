@@ -79,10 +79,10 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click.native="isShow = false"
+          <v-btn color="blue darken-1" @click=" Close" text @click.native="isShow = false"
             >Close</v-btn
           >
-          <v-btn color="blue darken-1" text @click.native="isShow = false"
+          <v-btn color="blue darken-1" @click="Save" text @click.native="isShow = false"
             >Save</v-btn
           >
         </v-card-actions>
@@ -98,14 +98,6 @@ export default {
     isUpdate: false,
     isShow: false,
     InforProfile: {
-      Email: "Nguyễn Huyền Trang",
-      NumberPhone: "CNTT15",
-      Adress: "6-9-1998",
-      FullName: "Vĩnh Phúc",
-      Dob: "90%",
-      LinkFacebook: "abcxyz",
-      Description: "a",
-      Slogan: "a"
     }
   }),
   methods: {
@@ -118,37 +110,38 @@ export default {
         this.isShow = true;
         this.InforProfile = {};
       }
+    },
+    Save() {
+      console.log(this.InforProfile)
+      if (this.isUpdate) {
+        axios
+          .put(
+            "https://apiblogprofile20191205011822.azurewebsites.net/api/InfoProfile",
+            this.InforProfile
+          )
+          .then(() => {
+            this.$emit("handlSave");
+          })
+          .catch(() => {
+            this.$emit("handlSave");
+          });
+      } else {
+        axios
+          .post(
+            "https://apiblogprofile20191205011822.azurewebsites.net/api/InfoProfile",
+            this.InforProfile
+          )
+          .then(() => {
+            this.$emit("handlSave");
+          })
+          .catch(() => {
+            this.$emit("handlSave");
+          });
+      }
+     },
+    Close() {
+      this.$emit("handlSave");
     }
-  },
-  Save() {
-    if (this.isUpdate) {
-      axios
-        .put(
-          "https://apiblogprofile20191205011822.azurewebsites.net/api/InfoProfile",
-          this.InforProfile
-        )
-        .then(() => {
-          this.$emit("SaveEmit");
-        })
-        .catch(() => {
-          this.$emit("SaveEmit");
-        });
-    } else {
-      axios
-        .post(
-          "https://apiblogprofile20191205011822.azurewebsites.net/api/InfoProfile",
-          this.InforProfile
-        )
-        .then(() => {
-          this.$emit("SaveEmit");
-        })
-        .catch(() => {
-          this.$emit("SaveEmit");
-        });
-    }
-  },
-  Close() {
-    this.$emit("SaveEmit");
   }
 };
 </script>

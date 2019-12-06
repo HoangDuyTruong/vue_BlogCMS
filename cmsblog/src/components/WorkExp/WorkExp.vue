@@ -112,7 +112,7 @@ export default {
       this.isXoa = id;
     },
     xacNhanXoa(id){
-      axios.delete("https://localhost:44334/api/WorkExp/"+ id).then(()=>{
+      axios.delete("https://apiblogprofile20191205011822.azurewebsites.net/api/WorkExp/"+ id).then(()=>{
           this.getData(0,this.size,"");
           this.dialogXoaWorkExp =false
         }).catch(()=>{

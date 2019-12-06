@@ -44,7 +44,7 @@
               <v-icon color="teal" @click="ShowModalSua(true, item)"
                 >edit</v-icon
               >
-              <v-icon color="pink" @click="showXoaInforProfile()"
+              <v-icon color="pink" @click="showXoaInforProfile(item.InfoProfileID)"
                 >delete</v-icon
               >
             </td>
@@ -68,7 +68,7 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-        <modal-InforProfile ref="ModalInforProfile"></modal-InforProfile>
+        <modal-InforProfile @handlSave ="Save" ref="ModalInforProfile"></modal-InforProfile>
       </template>
     </v-data-table>
   </v-card>
@@ -117,7 +117,6 @@ export default {
           }
         )
         .then(res => {
-          console.log(res);
           this.InforProfileData = res.data.Data;
         })
         .catch(error => {
@@ -125,7 +124,6 @@ export default {
         });
     },
     showXoaInforProfile(id) {
-      console.log(1111);
       this.dialogXoaInforProfile = true;
       this.idXoa = id;
     },
@@ -144,6 +142,9 @@ export default {
           this.getData(0, this.size, "");
           this.dialogXoaInforProfile = false;
         });
+    },
+    Save() {
+        this.getData(0, this.size);
     },
     ShowModalSua(isUpdate, id) {
       this.$refs.ModalInforProfile.show(isUpdate, id);

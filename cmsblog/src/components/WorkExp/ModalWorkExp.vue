@@ -90,7 +90,7 @@ export default {
       if (this.isUpdate) {
         console.log(this.WorkExp)
         axios
-          .put("https://localhost:44334/api/WorkExp", this.WorkExp)
+          .put("https://apiblogprofile20191205011822.azurewebsites.net/api/WorkExp", this.WorkExp)
           .then((res) => {
             console.log(res)
             this.isShow = false
