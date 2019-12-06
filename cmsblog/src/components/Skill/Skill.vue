@@ -104,7 +104,7 @@ export default {
         this.getData(0,10,"");
       },
       getData(page,size,search){
-        axios.get("https://localhost:44334/api/Skill",{
+        axios.get("https://apiblogprofile20191205011822.azurewebsites.net/api/skill",{
           params: {
             PageSize: page,
             Size:size,
@@ -118,6 +118,7 @@ export default {
           if(this.PageCount == undefined)
             this.PageCount = 0
         })
+        
       },
       showXoaSkill(id){
         this.dialogXoaSkill = true;
@@ -125,7 +126,7 @@ export default {
       },
       xacNhanXoa(id){
         console.log(id)
-        axios.delete("https://localhost:44334/api/Skill/"+ id).then(()=>{
+        axios.delete("https://apiblogprofile20191205011822.azurewebsites.net/api/Skill/"+ id).then(()=>{
           this.getData(0,this.size,"");
           this.dialogXoaSkill =false
         }).catch(()=>{

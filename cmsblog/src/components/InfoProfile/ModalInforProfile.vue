@@ -12,7 +12,11 @@
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="Email" v-model="InforProfile.Email" required></v-text-field>
+                <v-text-field
+                  label="Email"
+                  v-model="InforProfile.Email"
+                  required
+                ></v-text-field>
               </v-col>
               <v-col cols="12">
                 <v-text-field
@@ -75,10 +79,12 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click.native ="isShow = false"
+          <v-btn color="blue darken-1" text @click.native="isShow = false"
             >Close</v-btn
           >
-          <v-btn color="blue darken-1" text @click.native ="isShow = false">Save</v-btn>
+          <v-btn color="blue darken-1" text @click.native="isShow = false"
+            >Save</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -86,31 +92,63 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   data: () => ({
+    isUpdate: false,
     isShow: false,
     InforProfile: {
-       Email: "Nguyễn Huyền Trang",
-          NumberPhone: "CNTT15",
-          Adress: "6-9-1998",
-          FullName: "Vĩnh Phúc",
-          Dob: "90%",
-          LinkFacebook: "abcxyz",
-          Description: "a",
-          Slogan: "a"
+      Email: "Nguyễn Huyền Trang",
+      NumberPhone: "CNTT15",
+      Adress: "6-9-1998",
+      FullName: "Vĩnh Phúc",
+      Dob: "90%",
+      LinkFacebook: "abcxyz",
+      Description: "a",
+      Slogan: "a"
     }
   }),
   methods: {
-     show(isUpdate,id){
-        this.isUpdate = isUpdate;
-        if(isUpdate){
-          this.InforProfile = id;
-          this.isShow = true;
-        } else  {
-          this.isShow = true;
-          this.InforProfile = {};
-        }
+    show(isUpdate, id) {
+      this.isUpdate = isUpdate;
+      if (isUpdate) {
+        this.InforProfile = id;
+        this.isShow = true;
+      } else {
+        this.isShow = true;
+        this.InforProfile = {};
       }
+    }
+  },
+  Save() {
+    if (this.isUpdate) {
+      axios
+        .put(
+          "https://apiblogprofile20191205011822.azurewebsites.net/api/InfoProfile",
+          this.InforProfile
+        )
+        .then(() => {
+          this.$emit("SaveEmit");
+        })
+        .catch(() => {
+          this.$emit("SaveEmit");
+        });
+    } else {
+      axios
+        .post(
+          "https://apiblogprofile20191205011822.azurewebsites.net/api/InfoProfile",
+          this.InforProfile
+        )
+        .then(() => {
+          this.$emit("SaveEmit");
+        })
+        .catch(() => {
+          this.$emit("SaveEmit");
+        });
+    }
+  },
+  Close() {
+    this.$emit("SaveEmit");
   }
 };
 </script>
